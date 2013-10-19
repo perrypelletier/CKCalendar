@@ -4,47 +4,91 @@
 
 @interface CKViewController () <CKCalendarDelegate>
 
-@property(nonatomic, weak) CKCalendarView *calendar;
-@property(nonatomic, strong) UILabel *dateLabel;
+@property(nonatomic, weak) CKCalendarView *nonFlatCalendar;
+@property(nonatomic, weak) CKCalendarView *flatCalendar;
+@property(nonatomic, strong) UILabel *dateLabelFlat;
+@property(nonatomic, strong) UILabel *dateLabelNonFlat;
 @property(nonatomic, strong) NSDateFormatter *dateFormatter;
 @property(nonatomic, strong) NSDate *minimumDate;
 @property(nonatomic, strong) NSArray *disabledDates;
+@property(nonatomic, strong) UIScrollView *scrollView;
 
 @end
 
 @implementation CKViewController
 
+
 - (id)init {
     self = [super init];
     if (self) {
-        CKCalendarView *calendar = [[CKCalendarView alloc] initWithStartDay:startMonday];
-        self.calendar = calendar;
-        calendar.delegate = self;
-
-        self.dateFormatter = [[NSDateFormatter alloc] init];
-        [self.dateFormatter setDateFormat:@"dd/MM/yyyy"];
-        self.minimumDate = [self.dateFormatter dateFromString:@"20/09/2012"];
-
-        self.disabledDates = @[
-                [self.dateFormatter dateFromString:@"05/01/2013"],
-                [self.dateFormatter dateFromString:@"06/01/2013"],
-                [self.dateFormatter dateFromString:@"07/01/2013"]
-        ];
-
-        calendar.onlyShowCurrentMonth = NO;
-        calendar.adaptHeightToNumberOfWeeksInMonth = YES;
-
-        calendar.frame = CGRectMake(10, 10, 300, 320);
-        [self.view addSubview:calendar];
-
-        self.dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(calendar.frame) + 4, self.view.bounds.size.width, 24)];
-        [self.view addSubview:self.dateLabel];
-
-        self.view.backgroundColor = [UIColor whiteColor];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(localeDidChange) name:NSCurrentLocaleDidChangeNotification object:nil];
+        self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
+        self.scrollView.scrollEnabled = YES;
+        self.scrollView.contentSize = CGSizeMake(320, 800);
+        
+        [self addNonFlatDesignCalendar:CGRectMake(10, 44, 300, 320)];
+        [self addFlatDesignCalendar:CGRectMake(10, 420, 300, 320)];
+        
+        [self.view addSubview:self.scrollView];
     }
     return self;
+}
+
+- (void)addNonFlatDesignCalendar:(CGRect)rect {
+    CKCalendarView *calendar = [[CKCalendarView alloc] initWithStartDay:startMonday];
+    self.nonFlatCalendar = calendar;
+    self.nonFlatCalendar.delegate = self;
+    
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    [self.dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    self.minimumDate = [self.dateFormatter dateFromString:@"20/09/2012"];
+    
+    self.disabledDates = @[
+                           [self.dateFormatter dateFromString:@"05/01/2013"],
+                           [self.dateFormatter dateFromString:@"06/01/2013"],
+                           [self.dateFormatter dateFromString:@"07/01/2013"]
+                           ];
+    
+    calendar.onlyShowCurrentMonth = NO;
+    calendar.adaptHeightToNumberOfWeeksInMonth = YES;
+    
+    calendar.frame = rect;
+    [self.scrollView addSubview:calendar];
+    
+    self.dateLabelNonFlat = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(calendar.frame), self.view.bounds.size.width, 24)];
+    [self.scrollView addSubview:self.dateLabelNonFlat];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(localeDidChange) name:NSCurrentLocaleDidChangeNotification object:nil];
+}
+
+- (void)addFlatDesignCalendar:(CGRect)rect {
+    CKCalendarView *calendar = [[CKCalendarView alloc] initWithStartDay:startMonday style:CKCalendarStyleFlat];
+    self.flatCalendar = calendar;
+    self.flatCalendar.delegate = self;
+    
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    [self.dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    self.minimumDate = [self.dateFormatter dateFromString:@"20/09/2012"];
+    
+    self.disabledDates = @[
+                           [self.dateFormatter dateFromString:@"05/01/2013"],
+                           [self.dateFormatter dateFromString:@"06/01/2013"],
+                           [self.dateFormatter dateFromString:@"07/01/2013"]
+                           ];
+    
+    calendar.onlyShowCurrentMonth = NO;
+    calendar.adaptHeightToNumberOfWeeksInMonth = YES;
+    
+    calendar.frame = rect;
+    [self.scrollView addSubview:calendar];
+    
+    self.dateLabelFlat = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(calendar.frame), self.view.bounds.size.width, 24)];
+    [self.scrollView addSubview:self.dateLabelFlat];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(localeDidChange) name:NSCurrentLocaleDidChangeNotification object:nil];
 }
 
 - (void)dealloc {
@@ -73,7 +117,8 @@
 }
 
 - (void)localeDidChange {
-    [self.calendar setLocale:[NSLocale currentLocale]];
+    [self.flatCalendar setLocale:[NSLocale currentLocale]];
+    [self.nonFlatCalendar setLocale:[NSLocale currentLocale]];
 }
 
 - (BOOL)dateIsDisabled:(NSDate *)date {
@@ -101,15 +146,20 @@
 }
 
 - (void)calendar:(CKCalendarView *)calendar didSelectDate:(NSDate *)date {
-    self.dateLabel.text = [self.dateFormatter stringFromDate:date];
+    if (calendar == self.flatCalendar) {
+        self.dateLabelFlat.text = [self.dateFormatter stringFromDate:date];
+    } else {
+        self.dateLabelNonFlat.text = [self.dateFormatter stringFromDate:date];
+    }
+    
 }
 
 - (BOOL)calendar:(CKCalendarView *)calendar willChangeToMonth:(NSDate *)date {
     if ([date laterDate:self.minimumDate] == date) {
-        self.calendar.backgroundColor = [UIColor blueColor];
+        calendar.backgroundColor = [UIColor blueColor];
         return YES;
     } else {
-        self.calendar.backgroundColor = [UIColor redColor];
+        calendar.backgroundColor = [UIColor redColor];
         return NO;
     }
 }

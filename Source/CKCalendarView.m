@@ -21,7 +21,8 @@
 #import "CKCalendarView.h"
 
 #define BUTTON_MARGIN 4
-#define CALENDAR_MARGIN 5
+#define CALENDAR_MARGIN_SKEW 5
+#define CALENDAR_MARGIN_FLAT 0
 #define TOP_HEIGHT 44
 #define DAYS_HEADER_HEIGHT 22
 #define DEFAULT_CELL_WIDTH 43
@@ -119,6 +120,8 @@
 @property (nonatomic, strong) NSCalendar *calendar;
 @property(nonatomic, assign) CGFloat cellWidth;
 
+@property (nonatomic, assign) NSInteger calendarMargin;
+
 @end
 
 @implementation CKCalendarView
@@ -130,10 +133,18 @@
 }
 
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay {
-    return [self initWithStartDay:firstDay frame:CGRectMake(0, 0, 320, 320)];
+    return [self initWithStartDay:firstDay frame:CGRectMake(0, 0, 320, 320)] ;
 }
 
-- (void)_init:(CKCalendarStartDay)firstDay {
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style
+{
+    return [self initWithStartDay:firstDay frame:CGRectMake(0, 0, 320, 320) style:style];
+}
+
+- (void)_init:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style{
+    
+    self.calendarMargin = [self calendarMarginForStyle:style];
+    
     self.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     [self.calendar setLocale:[NSLocale currentLocale]];
 
@@ -222,22 +233,32 @@
     [self layoutSubviews]; // TODO: this is a hack to get the first month to show properly
 }
 
-- (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame {
+- (NSInteger)calendarMarginForStyle:(CKCalendarStyle)style
+{
+    return style == CKCalendarStyleFlat ? CALENDAR_MARGIN_FLAT : CALENDAR_MARGIN_SKEW;
+}
+
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame style:(CKCalendarStyle)style
+{
     self = [super initWithFrame:frame];
     if (self) {
-        [self _init:firstDay];
+        [self _init:firstDay style:style];
     }
     return self;
 }
 
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame {
+    return [self initWithStartDay:firstDay frame:frame style:CKCalendarStyleSkeuomorphic];
+}
+
 - (id)initWithFrame:(CGRect)frame {
-    return [self initWithStartDay:startSunday frame:frame];
+    return [self initWithStartDay:startSunday frame:frame style:CKCalendarStyleSkeuomorphic];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self _init:startSunday];
+        [self _init:startSunday style:CKCalendarStyleSkeuomorphic];
     }
     return self;
 }
@@ -245,7 +266,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    CGFloat containerWidth = self.bounds.size.width - (CALENDAR_MARGIN * 2);
+    CGFloat containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
     self.cellWidth = (floorf(containerWidth / 7.0)) - CELL_BORDER_WIDTH;
 
     NSInteger numberOfWeeksToShow = 6;
@@ -255,7 +276,7 @@
     CGFloat containerHeight = (numberOfWeeksToShow * (self.cellWidth + CELL_BORDER_WIDTH) + DAYS_HEADER_HEIGHT);
 
     CGRect newFrame = self.frame;
-    newFrame.size.height = containerHeight + CALENDAR_MARGIN + TOP_HEIGHT;
+    newFrame.size.height = containerHeight + self.calendarMargin + TOP_HEIGHT;
     self.frame = newFrame;
 
     self.highlight.frame = CGRectMake(1, 1, self.bounds.size.width - 2, 1);
@@ -265,7 +286,7 @@
     self.prevButton.frame = CGRectMake(BUTTON_MARGIN, BUTTON_MARGIN, 48, 38);
     self.nextButton.frame = CGRectMake(self.bounds.size.width - 48 - BUTTON_MARGIN, BUTTON_MARGIN, 48, 38);
 
-    self.calendarContainer.frame = CGRectMake(CALENDAR_MARGIN, CGRectGetMaxY(self.titleLabel.frame), containerWidth, containerHeight);
+    self.calendarContainer.frame = CGRectMake(self.calendarMargin, CGRectGetMaxY(self.titleLabel.frame), containerWidth, containerHeight);
     self.daysHeader.frame = CGRectMake(0, 0, self.calendarContainer.frame.size.width, DAYS_HEADER_HEIGHT);
 
     CGRect lastDayFrame = CGRectZero;

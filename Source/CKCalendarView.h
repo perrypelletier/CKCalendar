@@ -31,10 +31,17 @@ typedef enum {
     startMonday = 2,
 } CKCalendarStartDay;
 
+typedef enum : NSInteger {
+    CKCalendarStyleSkeuomorphic,
+    CKCalendarStyleFlat
+} CKCalendarStyle;
+
 @interface CKCalendarView : UIView
 
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay;
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style;
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame;
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame style:(CKCalendarStyle)style;
 
 @property (nonatomic) CKCalendarStartDay calendarStartDay;
 @property (nonatomic, strong) NSLocale *locale;
