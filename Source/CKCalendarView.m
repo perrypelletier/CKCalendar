@@ -361,6 +361,9 @@
         case CKCalendarStyleSkeuomorphic:
             containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
             break;
+        case CKCalendarStyleFlat:
+            containerWidth = self.bounds.size.width;
+            break;
         default:
             containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
             break;
