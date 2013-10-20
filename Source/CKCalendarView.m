@@ -143,7 +143,7 @@
 }
 
 - (void)_init:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style{
-    
+    self.style = style;
     self.calendarMargin = [self calendarMarginForStyle:style];
     
     self.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
@@ -268,7 +268,7 @@
     [super layoutSubviews];
 
     CGFloat containerWidth = [self containerWidthForStyle:self.style];
-    self.cellWidth = (floorf(containerWidth / 7.0)) - CELL_BORDER_WIDTH;
+    self.cellWidth = [self cellWidthForStyle:self.style];
 
     NSInteger numberOfWeeksToShow = 6;
     if (self.adaptHeightToNumberOfWeeksInMonth) {
@@ -370,6 +370,27 @@
     }
     
     return containerWidth;
+}
+
+- (CGFloat)cellWidthForStyle:(CKCalendarStyle)style
+{
+    CGFloat containerWidth = [self containerWidthForStyle:style];
+    
+    CGFloat cellWidth = 0;
+    
+    switch (style) {
+        case CKCalendarStyleSkeuomorphic:
+            cellWidth = (floorf(containerWidth / 7.0)) - CELL_BORDER_WIDTH;
+            break;
+        case CKCalendarStyleFlat:
+            cellWidth = (containerWidth / 7.0) - CELL_BORDER_WIDTH;
+            break;
+        default:
+            cellWidth = (floorf(containerWidth / 7.0)) - CELL_BORDER_WIDTH;
+            break;
+    }
+    
+    return cellWidth;
 }
 
 - (void)_updateDayOfWeekLabels {
