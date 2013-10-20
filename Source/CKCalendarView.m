@@ -123,6 +123,7 @@
 
 @property (nonatomic, assign) CKCalendarStyle style;
 @property (nonatomic, assign) NSInteger calendarMargin;
+@property (nonatomic, assign) CGFloat cornerRadius;
 
 @end
 
