@@ -120,6 +120,7 @@
 @property (nonatomic, strong) NSCalendar *calendar;
 @property(nonatomic, assign) CGFloat cellWidth;
 
+@property (nonatomic, assign) CKCalendarStyle style;
 @property (nonatomic, assign) NSInteger calendarMargin;
 
 @end
@@ -266,7 +267,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    CGFloat containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
+    CGFloat containerWidth = [self containerWidthForStyle:self.style];
     self.cellWidth = (floorf(containerWidth / 7.0)) - CELL_BORDER_WIDTH;
 
     NSInteger numberOfWeeksToShow = 6;
@@ -350,6 +351,22 @@
     if ([self.delegate respondsToSelector:@selector(calendar:didLayoutInRect:)]) {
         [self.delegate calendar:self didLayoutInRect:self.frame];
     }
+}
+
+- (CGFloat)containerWidthForStyle:(CKCalendarStyle)style
+{
+    CGFloat containerWidth = 0;
+    
+    switch (style) {
+        case CKCalendarStyleSkeuomorphic:
+            containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
+            break;
+        default:
+            containerWidth = self.bounds.size.width - (self.calendarMargin * 2);
+            break;
+    }
+    
+    return containerWidth;
 }
 
 - (void)_updateDayOfWeekLabels {
