@@ -27,6 +27,7 @@
 #define DAYS_HEADER_HEIGHT 22
 #define DEFAULT_CELL_WIDTH 43
 #define CELL_BORDER_WIDTH 1
+#define SMALLER_INNER_RADIUS_FACTOR 2.0f;
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
@@ -159,11 +160,11 @@
     self.onlyShowCurrentMonth = YES;
     self.adaptHeightToNumberOfWeeksInMonth = YES;
 
-    self.layer.cornerRadius = 6.0f;
+    self.layer.cornerRadius = self.cornerRadius;
 
     UIView *highlight = [[UIView alloc] initWithFrame:CGRectZero];
     highlight.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.2];
-    highlight.layer.cornerRadius = 6.0f;
+    highlight.layer.cornerRadius = self.cornerRadius;
     [self addSubview:highlight];
     self.highlight = highlight;
 
@@ -194,7 +195,7 @@
     calendarContainer.layer.borderWidth = 1.0f;
     calendarContainer.layer.borderColor = [UIColor blackColor].CGColor;
     calendarContainer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    calendarContainer.layer.cornerRadius = 4.0f;
+    calendarContainer.layer.cornerRadius = self.cornerRadius - SMALLER_INNER_RADIUS_FACTOR;
     calendarContainer.clipsToBounds = YES;
     [self addSubview:calendarContainer];
     self.calendarContainer = calendarContainer;
@@ -243,6 +244,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.cornerRadius = [self cornerRadiusForStyle:style];
         [self _init:firstDay style:style];
     }
     return self;
@@ -351,6 +353,24 @@
     if ([self.delegate respondsToSelector:@selector(calendar:didLayoutInRect:)]) {
         [self.delegate calendar:self didLayoutInRect:self.frame];
     }
+}
+
+- (CGFloat)cornerRadiusForStyle:(CKCalendarStyle)style
+{
+    CGFloat cornerRadius = 0;
+    
+    switch (style) {
+        case CKCalendarStyleSkeuomorphic:
+            cornerRadius = 6.0f;
+            break;
+        case CKCalendarStyleFlat:
+            cornerRadius = 0.0f;
+            break;
+        default:
+            break;
+    }
+    
+    return cornerRadius;
 }
 
 - (CGFloat)containerWidthForStyle:(CKCalendarStyle)style

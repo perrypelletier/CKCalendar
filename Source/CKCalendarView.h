@@ -59,6 +59,7 @@ typedef enum : NSInteger {
 @property (nonatomic, strong) UIFont *dateOfWeekFont;
 @property (nonatomic, strong) UIColor *dayOfWeekTextColor;
 @property (nonatomic, strong) UIFont *dateFont;
+@property (nonatomic, assign) CGFloat cornerRadius;
 
 - (void)setMonthButtonColor:(UIColor *)color;
 - (void)setInnerBorderColor:(UIColor *)color;
