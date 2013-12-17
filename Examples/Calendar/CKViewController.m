@@ -88,6 +88,8 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    [calendar setDayOfWeekBottomColor:[UIColor greenColor] topColor:[UIColor redColor]];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(localeDidChange) name:NSCurrentLocaleDidChangeNotification object:nil];
 }
 

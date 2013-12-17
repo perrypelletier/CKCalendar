@@ -111,7 +111,7 @@
 @property(nonatomic, strong) UIButton *prevButton;
 @property(nonatomic, strong) UIButton *nextButton;
 @property(nonatomic, strong) UIView *calendarContainer;
-@property(nonatomic, strong) GradientView *daysHeader;
+@property(nonatomic, strong) UIView *daysHeader;
 @property(nonatomic, strong) NSArray *dayOfWeekLabels;
 @property(nonatomic, strong) NSMutableArray *dateButtons;
 @property(nonatomic, strong) NSDateFormatter *dateFormatter;
@@ -201,7 +201,7 @@
     [self addSubview:calendarContainer];
     self.calendarContainer = calendarContainer;
 
-    GradientView *daysHeader = [[GradientView alloc] initWithFrame:CGRectZero];
+    UIView *daysHeader = [[UIView alloc] initWithFrame:CGRectZero];
     daysHeader.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     [self.calendarContainer addSubview:daysHeader];
     self.daysHeader = daysHeader;
@@ -293,11 +293,7 @@
     self.calendarContainer.frame = CGRectMake(self.calendarMargin, CGRectGetMaxY(self.titleLabel.frame), containerWidth, containerHeight);
     self.daysHeader.frame = CGRectMake(0, 0, self.calendarContainer.frame.size.width, DAYS_HEADER_HEIGHT);
 
-    CGRect lastDayFrame = CGRectZero;
-    for (UILabel *dayLabel in self.dayOfWeekLabels) {
-        dayLabel.frame = CGRectMake(CGRectGetMaxX(lastDayFrame) + CELL_BORDER_WIDTH, lastDayFrame.origin.y, self.cellWidth, self.daysHeader.frame.size.height);
-        lastDayFrame = dayLabel.frame;
-    }
+    [self loadDaysLabelsIntoDaysHeaderView];
 
     for (DateButton *dateButton in self.dateButtons) {
         dateButton.date = nil;
@@ -353,6 +349,15 @@
     
     if ([self.delegate respondsToSelector:@selector(calendar:didLayoutInRect:)]) {
         [self.delegate calendar:self didLayoutInRect:self.frame];
+    }
+}
+
+- (void)loadDaysLabelsIntoDaysHeaderView
+{
+    CGRect lastDayFrame = CGRectZero;
+    for (UILabel *dayLabel in self.dayOfWeekLabels) {
+        dayLabel.frame = CGRectMake(CGRectGetMaxX(lastDayFrame) + CELL_BORDER_WIDTH, lastDayFrame.origin.y, self.cellWidth, self.daysHeader.frame.size.height);
+        lastDayFrame = dayLabel.frame;
     }
 }
 
@@ -611,7 +616,18 @@
 }
 
 - (void)setDayOfWeekBottomColor:(UIColor *)bottomColor topColor:(UIColor *)topColor {
-    [self.daysHeader setColors:[NSArray arrayWithObjects:topColor, bottomColor, nil]];
+    [self.daysHeader removeFromSuperview];
+    self.daysHeader = nil;
+
+    GradientView *gradientView = [[GradientView alloc] initWithFrame:CGRectZero];
+    gradientView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+    
+    [gradientView setColors:[NSArray arrayWithObjects:topColor, bottomColor, nil]];
+    self.daysHeader = gradientView;
+
+    [self.calendarContainer addSubview:self.daysHeader];
+        self.daysHeader.frame = CGRectMake(0, 0, self.calendarContainer.frame.size.width, DAYS_HEADER_HEIGHT);
+    [self loadDaysLabelsIntoDaysHeaderView];
 }
 
 - (void)setDateFont:(UIFont *)font {
