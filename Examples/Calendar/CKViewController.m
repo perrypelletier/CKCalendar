@@ -79,6 +79,8 @@
     
     calendar.onlyShowCurrentMonth = NO;
     calendar.adaptHeightToNumberOfWeeksInMonth = YES;
+    // you can now set the out of month date item background color
+    // calendar.outOfMonthBackgroundColor = [UIColor redColor];
     
     calendar.frame = rect;
     [self.scrollView addSubview:calendar];

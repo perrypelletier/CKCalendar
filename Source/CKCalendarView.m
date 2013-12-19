@@ -160,6 +160,7 @@
     self.calendarStartDay = firstDay;
     self.onlyShowCurrentMonth = YES;
     self.adaptHeightToNumberOfWeeksInMonth = YES;
+    self.outOfMonthBackgroundColor = UIColorFromRGB(0xE6E6E6);
 
     self.layer.cornerRadius = self.cornerRadius;
 
@@ -323,8 +324,9 @@
         if ([self _dateIsToday:dateButton.date]) {
             item.textColor = UIColorFromRGB(0xF2F2F2);
             item.backgroundColor = [UIColor lightGrayColor];
-        } else if (!self.onlyShowCurrentMonth && [self _compareByMonth:date toDate:self.monthShowing] != NSOrderedSame) {
+        } else if ([self _dayIsOutsideOfCurrentMonth:date]) {
             item.textColor = [UIColor lightGrayColor];
+            item.backgroundColor = self.outOfMonthBackgroundColor;
         }
 
         if (self.delegate && [self.delegate respondsToSelector:@selector(calendar:configureDateItem:forDate:)]) {
@@ -351,6 +353,12 @@
         [self.delegate calendar:self didLayoutInRect:self.frame];
     }
 }
+
+- (BOOL)_dayIsOutsideOfCurrentMonth:(NSDate *)date
+{
+    return !self.onlyShowCurrentMonth && [self _compareByMonth:date toDate:self.monthShowing] != NSOrderedSame;
+}
+
 
 - (void)loadDaysLabelsIntoDaysHeaderView
 {
