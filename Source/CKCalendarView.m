@@ -366,6 +366,7 @@
     for (UILabel *dayLabel in self.dayOfWeekLabels) {
         dayLabel.frame = CGRectMake(CGRectGetMaxX(lastDayFrame) + CELL_BORDER_WIDTH, lastDayFrame.origin.y, self.cellWidth, self.daysHeader.frame.size.height);
         lastDayFrame = dayLabel.frame;
+        [self.calendarContainer bringSubviewToFront:dayLabel];
     }
 }
 
@@ -634,7 +635,8 @@
     self.daysHeader = gradientView;
 
     [self.calendarContainer addSubview:self.daysHeader];
-        self.daysHeader.frame = CGRectMake(0, 0, self.calendarContainer.frame.size.width, DAYS_HEADER_HEIGHT);
+    self.daysHeader.frame = CGRectMake(0, 0, self.calendarContainer.frame.size.width, DAYS_HEADER_HEIGHT);
+    
     [self loadDaysLabelsIntoDaysHeaderView];
 }
 
