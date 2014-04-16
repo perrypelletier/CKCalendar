@@ -10,7 +10,7 @@
 @property(nonatomic, strong) UILabel *dateLabelNonFlat;
 @property(nonatomic, strong) NSDateFormatter *dateFormatter;
 @property(nonatomic, strong) NSDate *minimumDate;
-@property(nonatomic, strong) NSArray *disabledDates;
+@property(nonatomic, strong) NSDate *disabledDate;
 @property(nonatomic, strong) UIScrollView *scrollView;
 
 @end
@@ -42,11 +42,7 @@
     [self.dateFormatter setDateFormat:@"dd/MM/yyyy"];
     self.minimumDate = [self.dateFormatter dateFromString:@"20/09/2012"];
     
-    self.disabledDates = @[
-                           [self.dateFormatter dateFromString:@"05/01/2013"],
-                           [self.dateFormatter dateFromString:@"06/01/2013"],
-                           [self.dateFormatter dateFromString:@"07/01/2013"]
-                           ];
+    self.disabledDate = [self.dateFormatter dateFromString:@"05/01/2014"];
     
     calendar.onlyShowCurrentMonth = NO;
     calendar.adaptHeightToNumberOfWeeksInMonth = YES;
@@ -71,16 +67,10 @@
     [self.dateFormatter setDateFormat:@"dd/MM/yyyy"];
     self.minimumDate = [self.dateFormatter dateFromString:@"20/09/2012"];
     
-    self.disabledDates = @[
-                           [self.dateFormatter dateFromString:@"05/01/2013"],
-                           [self.dateFormatter dateFromString:@"06/01/2013"],
-                           [self.dateFormatter dateFromString:@"07/01/2013"]
-                           ];
+    self.disabledDate = [self.dateFormatter dateFromString:@"01/05/2014"],
     
     calendar.onlyShowCurrentMonth = NO;
     calendar.adaptHeightToNumberOfWeeksInMonth = YES;
-    // you can now set the out of month date item background color
-    // calendar.outOfMonthBackgroundColor = [UIColor redColor];
     
     calendar.frame = rect;
     [self.scrollView addSubview:calendar];
@@ -126,10 +116,8 @@
 }
 
 - (BOOL)dateIsDisabled:(NSDate *)date {
-    for (NSDate *disabledDate in self.disabledDates) {
-        if ([disabledDate isEqualToDate:date]) {
-            return YES;
-        }
+    if ([self.disabledDate isEqualToDate:date]) {
+        return YES;
     }
     return NO;
 }
