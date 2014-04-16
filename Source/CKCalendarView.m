@@ -232,7 +232,7 @@
 
     // initialize the thing
     self.monthShowing = [NSDate date];
-    [self _setDefaultStyle];
+    [self _setDefaultStyle:style];
     
     [self layoutSubviews]; // TODO: this is a hack to get the first month to show properly
 }
@@ -512,7 +512,7 @@
     [self setNeedsLayout];
 }
 
-- (void)_setDefaultStyle {
+- (void)_setDefaultStyle:(CKCalendarStyle)style {
     self.backgroundColor = UIColorFromRGB(0x393B40);
 
     [self setTitleColor:[UIColor whiteColor]];
@@ -520,7 +520,10 @@
 
     [self setDayOfWeekFont:[UIFont boldSystemFontOfSize:12.0]];
     [self setDayOfWeekTextColor:UIColorFromRGB(0x999999)];
-    [self setDayOfWeekBottomColor:UIColorFromRGB(0xCCCFD5) topColor:[UIColor whiteColor]];
+
+    if (style == CKCalendarStyleSkeuomorphic) {
+        [self setDayOfWeekBottomColor:UIColorFromRGB(0xCCCFD5) topColor:[UIColor whiteColor]];
+    }
 
     [self setDateFont:[UIFont boldSystemFontOfSize:16.0f]];
     [self setDateBorderColor:UIColorFromRGB(0xDAE1E6)];
