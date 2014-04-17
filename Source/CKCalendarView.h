@@ -40,8 +40,8 @@ typedef enum : NSInteger {
 
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay;
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style;
-- (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame;
 - (id)initWithStartDay:(CKCalendarStartDay)firstDay frame:(CGRect)frame style:(CKCalendarStyle)style;
+- (id)initWithStartDay:(CKCalendarStartDay)firstDay style:(CKCalendarStyle)style suppressHeader:(BOOL)suppressHeader suppressDayLabels:(BOOL)supressDayLabels;
 
 @property (nonatomic) CKCalendarStartDay calendarStartDay;
 @property (nonatomic, strong) NSLocale *locale;

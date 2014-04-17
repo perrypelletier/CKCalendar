@@ -1,6 +1,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import "CKViewController.h"
 #import "CKCalendarView.h"
+#import "HCPTwoWeekCalendarViewController.h"
 
 @interface CKViewController () <CKCalendarDelegate>
 
@@ -28,9 +29,28 @@
         [self addNonFlatDesignCalendar:CGRectMake(10, 44, 300, 320)];
         [self addFlatDesignCalendar:CGRectMake(10, 420, 300, 320)];
         
+        [self addButtonToGotoTwoWeekViewController:CGRectMake(10, 720, 200, 22)];
+        
         [self.view addSubview:self.scrollView];
     }
     return self;
+}
+
+- (void)addButtonToGotoTwoWeekViewController:(CGRect)rect
+{
+    UIButton *button = [[UIButton alloc] initWithFrame:rect];
+    
+    [button setTitle:@"Goto" forState:UIControlStateNormal];
+    button.backgroundColor = [UIColor redColor];
+    
+    [button addTarget:self action:@selector(gotoTwoWeekViewClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:button];
+}
+
+- (void)gotoTwoWeekViewClicked:(id)sender
+{
+    UIViewController *viewController = [[HCPTwoWeekCalendarViewController alloc] init];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 - (void)addNonFlatDesignCalendar:(CGRect)rect {
